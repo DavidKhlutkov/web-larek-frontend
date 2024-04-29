@@ -1,7 +1,4 @@
-interface EventEmitter {
-    emit: <T extends object>(event: string, data?: T) => void;
-}
-interface IProductItem {
+export interface IProductItem {
     id: string;
     description: string;
     image: string;
@@ -10,64 +7,70 @@ interface IProductItem {
     price: number | null;
   }
   
-  interface IProductList {
+  export interface ApiListResponse {
     total: number;
     products: IProductItem[];
   }
   
-  interface IError {
-    error: string;
-  }
-  
-  interface IBasket {
+  export interface IBasket {
     items: Map<string, number>;
     add: (id: string) => void;
     remove: (id: string) => void;
   }
 
-  interface IOrder {
+  export interface IOrder {
     adress: string;
     payment: string;
   }
 
-  interface IContact {
+  export interface IContact {
     phone: string;
     email: string;
   }
 
-  interface IModal {
+  export interface IModal {
     open: () => void;
     close: () => void;
     submit: () => void;
   }
 
-  interface IForm {
-    on: <T extends object>(event: string, callback: (data: T) => void) => void;
-    emit: <T extends object>(event: string, data?: T) => void;
-    trigger: <T extends object>(event: string, context?: Partial<T>) => (data: T) => void;
-    reset: () => void;
+  export interface IEventEmitter {
+    on: (event: string, callback: () => void) => void;
+    emit: (event: string) => void;
+    trigger: (event: string) => () => void;
   }
 
-  interface IModalBasket extends IForm {
+  export interface IFormState {
+    valid: boolean;
+  }
+
+  export type FormErrors = Partial<Record<keyof IOrder, string>>;
+
+  export interface IModalBasket {
     modal: IModal;
     basket: IBasket;
   }
 
-  interface IModalOrder extends IForm {
+  export interface IModalOrder extends IFormState {
     modal: IModal;
     order: IOrder;
   }
   
-  interface IModalContact extends IForm {
+  export interface IModalContact extends IFormState {
     modal: IModal;
     contact: IContact;
   }
 
-  interface ISuccess {
+  export interface ISuccess {
     close: () => void;
   }
+
+  export interface ISuccessResult {
+    id: string;
+    total: number;
+  }
   
-  interface IModalSuccess extends IForm {
+  export interface IModalSuccess extends IFormState {
     modal: IModal;
     success: ISuccess;  
   }
