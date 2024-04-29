@@ -40,3 +40,4 @@ npm run build
 ```
 yarn build
 ```
+![UML sheme](https://github.com/DavidKhlutkov/web-larek-frontend/blob/main/SHEMEUMLARCHICTURE.png)
