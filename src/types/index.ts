@@ -6,12 +6,12 @@ export interface IProductItem {
     category: string;
     price: number | null;
   }
-  
-  export interface ApiListResponse {
-    total: number;
-    products: IProductItem[];
+
+  export interface ICard extends IProductItem {
+    index: number;
+    buttonTitle: string;
   }
-  
+
   export interface IBasket {
     items: Map<string, number>;
     add: (id: string) => void;
@@ -28,38 +28,17 @@ export interface IProductItem {
     email: string;
   }
 
-  export interface IModal {
-    open: () => void;
-    close: () => void;
-    submit: () => void;
+  export interface Order extends IOrder, IContact, IProductItem {
+    total: number;
+    items: IProductItem[];
   }
 
-  export interface IEventEmitter {
-    on: (event: string, callback: () => void) => void;
-    emit: (event: string) => void;
-    trigger: (event: string) => () => void;
-  }
-
-  export interface IFormState {
-    valid: boolean;
+  export interface IOrderResponse {
+    id: string;
+    total: number;
   }
 
   export type FormErrors = Partial<Record<keyof IOrder, string>>;
-
-  export interface IModalBasket {
-    modal: IModal;
-    basket: IBasket;
-  }
-
-  export interface IModalOrder extends IFormState {
-    modal: IModal;
-    order: IOrder;
-  }
-  
-  export interface IModalContact extends IFormState {
-    modal: IModal;
-    contact: IContact;
-  }
 
   export interface ISuccess {
     close: () => void;
@@ -69,9 +48,11 @@ export interface IProductItem {
     id: string;
     total: number;
   }
-  
-  export interface IModalSuccess extends IFormState {
-    modal: IModal;
-    success: ISuccess;  
-  }
 
+  export interface IAppState {
+    products: IProductItem[];
+    basket: IBasket | null;
+    contact: IContact | null;
+    order: IOrder | null;
+    success: ISuccessResult | null;
+  }
