@@ -7,15 +7,21 @@ export interface IProductItem {
     price: number | null;
   }
 
-  export interface ICard extends IProductItem {
-    index: number;
-    buttonTitle: string;
+  export  interface IProductData {
+    items: IProductItem[];
+    preview: string;
   }
 
-  export interface IBasket {
-    items: Map<string, number>;
-    add: (id: string) => void;
-    remove: (id: string) => void;
+  export interface ICard extends IProductItem {
+    index?: number;
+    buttonTitle?: string;
+  }
+
+
+  export interface IBasketView {
+    items: HTMLElement[];
+    price: number;
+    selected: string[];
   }
 
   export interface IOrder {
@@ -28,31 +34,26 @@ export interface IProductItem {
     email: string;
   }
 
-  export interface Order extends IOrder, IContact, IProductItem {
+  export interface IForm extends IOrder, IContact {
     total: number;
-    items: IProductItem[];
+    items: string[];
   }
 
-  export interface IOrderResponse {
+  export interface IFormResponse {
     id: string;
     total: number;
   }
 
-  export type FormErrors = Partial<Record<keyof IOrder, string>>;
+  export type FormErrors = Partial<Record<keyof IForm, string>>;
 
   export interface ISuccess {
-    close: () => void;
-  }
-
-  export interface ISuccessResult {
-    id: string;
     total: number;
   }
 
   export interface IAppState {
     products: IProductItem[];
-    basket: IBasket | null;
-    contact: IContact | null;
-    order: IOrder | null;
-    success: ISuccessResult | null;
+    basket: IProductItem[];
+    order: IForm;
+    orderResponse: IFormResponse | null;
+    prewiew: string | null;
   }

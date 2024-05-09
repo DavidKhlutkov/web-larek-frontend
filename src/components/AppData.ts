@@ -1,9 +1,7 @@
 import { Model } from "./base/Model";
 import {
   IProductItem,
-  IBasket,
-  Order,
-  ISuccessResult,
+  IForm,
   IAppState,
   FormErrors
 } from "../types";
@@ -13,20 +11,85 @@ export interface CatalogChangeEvent {
   products: IProductItem[];
 }
 
-export interface AppState extends Model<IAppState> {
-  basket: IBasket | null;
-  order: Order | null;
-  formErrors: FormErrors | null;
-  catalog: IProductItem[] | null;
-  success: ISuccessResult | null;
+export class AppState extends Model<IAppState> {
+  catalog: IProductItem[];
+  basket: IProductItem[] = [];
+  order: IForm = {
+    total: 0,
+    items: [],
+    phone: '',
+    email: '',
+    payment: 'Онлайн',
+    adress: '',
+  };
+  orderError: FormErrors = {};
+  preview: string | null;
 
-  SetCatalog(items: IProductItem[]) {
-    this.catalog = items;
-    this.emitChanges("items:changed", { catalog: this.catalog })
+  addBasket(product: IProductItem) {
+    this.basket.push(product);
+    this.UpdateBasket();
+  }
+
+  removeBasket(product: IProductItem) {
+    this.basket = this.basket.filter((item) => item.id !== product.id);
+    this.UpdateBasket();
+  }
+
+  clearBasket() {
+    this.basket = [];
+    this.UpdateBasket();
   }
   
-  SetSuccess(success: ISuccessResult) {
-    
+  UpdateBasket() {
+    this.events.emit('catalog:change', {
+      products: this.basket
+    });
+  }
+  
+  clearOrder() {
+    this.order = {
+      total: 0,
+      items: [],
+      phone: '',
+      email: '',
+      payment: 'Онлайн',
+      adress: '',
+    };
+  }
+
+  setCatalog(products: IProductItem[]) {
+    this.catalog = products;
+  }
+
+  validateOrder() {
+    const errors: typeof this.orderError = {};
+    if (!this.order.email) {
+        errors.email = 'Необходимо указать email';
+    }
+    if (!this.order.phone) {
+        errors.phone = 'Необходимо указать телефон';
+    }
+    this.orderError = errors;
+    this.events.emit('formErrors:change', this.orderError);
+    return Object.keys(errors).length === 0;
+}
+
+  validateContact() {
+  const errors: typeof this.orderError = {};
+  if (!this.order.email) {
+    errors.email = 'Необходимо указать email';
+  }
+  if (!this.order.phone) {
+      errors.phone = 'Необходимо указать телефон';
+  }
+  this.orderError = errors;
+  this.events.emit('formErrors:change', this.orderError);
+  return Object.keys(errors).length === 0;
+  }
+
+  setPreview(item: IProductItem) {
+    this.preview = item.id;
+    this.emitChanges('preview:changed', item);
   }
 }
 
