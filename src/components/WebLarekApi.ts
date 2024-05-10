@@ -25,6 +25,15 @@ export class AppApi extends Api implements IAppAPI {
 		);
 	}
 
+	// getProductList(): Promise<IProductItem[]> {
+	// 	return this.get('/product').then((data: ApiListResponse<IProductItem>) =>
+	// 		data.items.map((item) => ({
+	// 			...item,
+	// 			image: this.cdn + item.image,
+	// 		}))
+	// 	);
+	// }
+
 	getProductItem(id: string): Promise<IProductItem> {
 		return this.get(`/product/${id}`).then((item: IProductItem) => ({
 			...item,

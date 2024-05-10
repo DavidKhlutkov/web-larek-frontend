@@ -23,8 +23,9 @@ import { Page } from './components/Page';
 import { AppState } from './components/AppData';
 import { Order} from './components/Order';
 import { Modal } from './components/common/Modal';
+import { Basket } from './components/Basket';
 
-const api = new AppApi(API_URL, CDN_URL );
+const api = new AppApi(CDN_URL, API_URL  );
 const events = new EventEmitter();
 
 // Чтобы мониторить все события, для отладки
@@ -47,6 +48,9 @@ const appData = new AppState({}, events);
 // Глобальные контейнеры
 const page = new Page(document.body, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
+const order = new Order(cloneTemplate(orderTemplate), events);
+const basket = new Basket(cloneTemplate(basketTemplate), events);
+
 
 //TODO: Переиспользуемые части интерфейса
 
@@ -63,7 +67,7 @@ events.on<CatalogChangeEvent>('items:changed', () => {
 			price: item.price,
 			category: item.category,
 		});
-    });
+	});
 });
 
 // отображение карточки
@@ -92,6 +96,28 @@ events.on('card:select', (item: IProductItem) => {
     });
 });
 
+// Добавление в корзину
+events.on('card:toBasket', (item: IProductItem) => {
+    appData.addBasket(item);
+})
+
+// Очистка корзины
+events.on('basket:clear', () => {
+    appData.clearBasket();
+})
+
+// Открытие корзины
+events.on('basket:open', () => {
+    page.locked = true;
+    modal.render({
+        content: basket.render({}),
+    });
+})
+
+// Обновление корзины
+events.on('basket:update', () => {
+    // TODO: скорее всего тут должна быть логика +1 при обновлении ловим событие обновляем корзину и бесценный товар надо обдумать
+})
 
 // При открытии модального окна блокируем страницу
 events.on('modal:open', () => {
