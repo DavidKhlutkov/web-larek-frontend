@@ -49,14 +49,14 @@ const page = new Page(document.body, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const order = new Order(cloneTemplate(orderTemplate), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
-const contacts = new Modal(cloneTemplate(contactsTemplate), events);
+// const contacts = new Modal(cloneTemplate(contactsTemplate), events);
 
 
 //TODO: Переиспользуемые части интерфейса
 
 
 // Каталог
-events.on<CatalogChangeEvent>('items:changed', () => {
+events.on<CatalogChangeEvent>('items:changed', ( ) => {
 	page.catalog = appData.catalog.map((item) => {
 		const card = new Card(cloneTemplate(cardTemlate), {
 			onClick: () => events.emit('card:select', item),

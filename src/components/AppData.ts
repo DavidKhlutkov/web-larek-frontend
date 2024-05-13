@@ -61,6 +61,7 @@ export class AppState extends Model<IAppState> {
 
   setCatalog(products: IProductItem[]) {
     this.catalog = products;
+    this.emitChanges('items:changed', { catalog: this.catalog });
   }
 
   setOrderField(field: keyof  IOrder , value: string) {
