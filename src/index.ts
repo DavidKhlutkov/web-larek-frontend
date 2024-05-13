@@ -5,7 +5,6 @@ import {
     createElement
 } from './utils/utils';
 import { 
-    ICard,
     IForm,
     IBasketView,
     ISuccess,
@@ -50,6 +49,7 @@ const page = new Page(document.body, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const order = new Order(cloneTemplate(orderTemplate), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
+const contacts = new Modal(cloneTemplate(contactsTemplate), events);
 
 
 //TODO: Переиспользуемые части интерфейса
@@ -57,11 +57,11 @@ const basket = new Basket(cloneTemplate(basketTemplate), events);
 
 // Каталог
 events.on<CatalogChangeEvent>('items:changed', () => {
-    page.catalog = appData.catalog.map(item => {
-        const card = new Card(cloneTemplate(cardTemlate), {
-            onClick: () => events.emit('card:select', item)
-        });
-        return card.render({
+	page.catalog = appData.catalog.map((item) => {
+		const card = new Card(cloneTemplate(cardTemlate), {
+			onClick: () => events.emit('card:select', item),
+		});
+		return card.render({
 			title: item.title,
 			image: item.image,
 			price: item.price,
@@ -108,25 +108,35 @@ events.on('basket:clear', () => {
 
 // Открытие корзины
 events.on('basket:open', () => {
-    page.locked = true;
-    modal.render({
-        content: basket.render({}),
-    });
+  page.locked = true;
+  modal.render({
+    content: basket.render({}),
+  });
 })
 
 // Обновление корзины
 events.on('basket:update', () => {
-    // TODO: скорее всего тут должна быть логика +1 при обновлении ловим событие обновляем корзину и бесценный товар надо обдумать
+  // TODO: скорее всего тут должна быть логика +1 при обновлении ловим событие обновляем корзину и бесценный товар надо обдумать
+})
+
+// Открытие модального окна с адресом
+events.on('order:open', () => {
+  
+})
+
+// Открытие модального окна с контактами
+events.on('contacts:open', () => {
+    
 })
 
 // При открытии модального окна блокируем страницу
 events.on('modal:open', () => {
-	page.locked = true;
+  page.locked = true;
 });
 
 // При закрытии модального окна разблокируем страницу
 events.on('modal:close', () => {
-	page.locked = false;
+  page.locked = false;
 });
 
 // Получение и отправка данных

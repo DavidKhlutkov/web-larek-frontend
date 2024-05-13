@@ -3,7 +3,9 @@ import {
   IProductItem,
   IForm,
   IAppState,
-  FormErrors
+  FormErrors,
+  IOrder,
+  IContact,
 } from "../types";
 
   
@@ -60,6 +62,22 @@ export class AppState extends Model<IAppState> {
   setCatalog(products: IProductItem[]) {
     this.catalog = products;
   }
+
+  setOrderField(field: keyof  IOrder , value: string) {
+    this.order[field] = value;
+
+    if (this.validateOrder()) {
+        this.events.emit('order:ready', this.order);
+    }
+}
+
+setContactField(field: keyof  IContact , value: string) {
+  this.order[field] = value;
+
+  if (this.validateOrder()) {
+      this.events.emit('order:ready', this.order);
+  }
+}
 
   validateOrder() {
     const errors: typeof this.orderError = {};

@@ -12,11 +12,6 @@ export interface IProductItem {
     preview: string;
   }
 
-  export interface ICard extends IProductItem {
-    index?: number;
-    buttonTitle?: string;
-  }
-
 
   export interface IBasketView {
     items: HTMLElement[];

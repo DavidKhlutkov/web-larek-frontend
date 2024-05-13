@@ -1,10 +1,15 @@
-import { ICard } from "../types";
+import { IProductItem } from "../types";
 import { Component } from "./base/Component";
 import { ensureElement } from "../utils/utils";
 import { settings } from "../utils/constants";
 
 interface ICardActions {
     onClick: (event: MouseEvent) => void;
+}
+
+interface ICard extends IProductItem {
+  index?: number;
+  buttonTitle?: string;
 }
 
 export class Card extends Component<ICard> {
