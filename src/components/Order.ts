@@ -23,14 +23,6 @@ export class Order  extends Form<IForm> {
         (this.container.elements.namedItem('address') as HTMLInputElement).value = value;
     }
 
-    set phone(value: string) {
-        (this.container.elements.namedItem('phone') as HTMLInputElement).value = value;
-    }
-
-    set email(value: string) {
-        (this.container.elements.namedItem('email') as HTMLInputElement).value = value;
-    }
-
     set payment(value: string) {
     const isOnline = value === 'Онлайн';
     const isOnDelivery = value === 'При получении';
@@ -38,4 +30,18 @@ export class Order  extends Form<IForm> {
     this._card.classList.toggle('button_alt-active', isOnline);
     this._cash.classList.toggle('button_alt-active', isOnDelivery);
     }    
+}
+
+export class Contact extends Form<IForm> {
+    constructor(container: HTMLFormElement, events: IEvents) {
+        super(container, events);
+    }
+
+    set phone(value: string) {
+        (this.container.elements.namedItem('phone') as HTMLInputElement).value = value;
+    }
+
+    set email(value: string) {
+        (this.container.elements.namedItem('email') as HTMLInputElement).value = value;
+    }
 }

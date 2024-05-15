@@ -20,9 +20,10 @@ import { EventEmitter } from './components/base/events';
 import { Card} from './components/Card';
 import { Page } from './components/Page';
 import { AppState } from './components/AppData';
-import { Order} from './components/Order';
+import { Order, Contact} from './components/Order';
 import { Modal } from './components/common/Modal';
 import { Basket } from './components/Basket';
+import { Success } from './components/Succes';
 
 const api = new AppApi(CDN_URL, API_URL  );
 const events = new EventEmitter();
@@ -49,8 +50,7 @@ const page = new Page(document.body, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const order = new Order(cloneTemplate(orderTemplate), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
-// const contacts = new Modal(cloneTemplate(contactsTemplate), events);
-
+const contacts = new Contact(cloneTemplate(contactsTemplate), events);
 
 //TODO: Переиспользуемые части интерфейса
 
@@ -81,6 +81,7 @@ events.on('card:select', (item: IProductItem) => {
     const card = new Card(cloneTemplate(cardPreviewTemplate), {
         onClick: () => {
             events.emit('card:toBasket', item)
+            card.button = appData.basket.indexOf(item) !== -1 ? 'Удалить из корзины' : 'Добавить в корзину';
         },
     });
     modal.render({
@@ -96,37 +97,85 @@ events.on('card:select', (item: IProductItem) => {
     });
 });
 
-// Добавление в корзину
+// Переключатель кнопок
 events.on('card:toBasket', (item: IProductItem) => {
+  if(appData.basket.indexOf(item) === -1) {
+    events.emit('basket:add', item)
+  } else {
+    events.emit('basket:remove', item)
+  }
+})
+
+// Добавление в корзину
+events.on('basket:add', (item: IProductItem) => {
     appData.addBasket(item);
 })
 
-// Очистка корзины
-events.on('basket:clear', () => {
-    appData.clearBasket();
+// Удаление из корзины
+events.on('basket:remove', (item: IProductItem) => {
+    appData.removeBasket(item);
+})
+
+// Размер корзины
+events.on('basket:change', () => {
+  page.counter = appData.basket.length;
 })
 
 // Открытие корзины
 events.on('basket:open', () => {
   page.locked = true;
+  basket.selected = appData.basket.map(item => item.id);
   modal.render({
     content: basket.render({}),
   });
 })
 
+
 // Обновление корзины
-events.on('basket:update', () => {
-  // TODO: скорее всего тут должна быть логика +1 при обновлении ловим событие обновляем корзину и бесценный товар надо обдумать
+events.on('basket:change', () => {
+  basket.items = appData.basket.map((item, identifierCard) => {
+    const card = new Card(cloneTemplate(cardBasket), {
+      onClick: () => {
+        events.emit('basket:remove', item);
+      },
+    });
+    return card.render({
+      identifierCard: (identifierCard + 1).toString(),
+      title: item.title,
+      price: item.price,
+    });
+  })
+  basket.priceTotal = appData.getTotal();
 })
 
 // Открытие модального окна с адресом
-events.on('order:open', () => {
-  
-})
+events.on('order:submit', () => {
+	modal.render({
+		content: order.render({
+			payment: '',
+			address: '',
+			valid: false,
+			errors: [],
+		}),
+	});
+});
 
 // Открытие модального окна с контактами
-events.on('contacts:open', () => {
-    
+events.on('contacts:submit', () => {
+  modal.render({
+    content: contacts.render({
+      phone: '',
+      email: '',
+      valid: false,
+      errors: [],
+    }),
+  })  
+})
+
+// Очистка формы
+events.on('order:reset, contacts:reset', () => {
+  appData.orderReset();
+  appData.contactReset();
 })
 
 // При открытии модального окна блокируем страницу
@@ -138,6 +187,9 @@ events.on('modal:open', () => {
 events.on('modal:close', () => {
   page.locked = false;
 });
+
+// Отправка полей формы
+
 
 // Получение и отправка данных
 api.getProductList()

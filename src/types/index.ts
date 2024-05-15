@@ -20,7 +20,7 @@ export interface IProductItem {
   }
 
   export interface IOrder {
-    adress: string;
+    address: string;
     payment: string;
   }
 

@@ -22,7 +22,7 @@ export class AppState extends Model<IAppState> {
     phone: '',
     email: '',
     payment: 'Онлайн',
-    adress: '',
+    address: '',
   };
   orderError: FormErrors = {};
   preview: string | null;
@@ -32,22 +32,30 @@ export class AppState extends Model<IAppState> {
     this.UpdateBasket();
   }
 
+
   removeBasket(product: IProductItem) {
     this.basket = this.basket.filter((item) => item.id !== product.id);
     this.UpdateBasket();
   }
-
+// TODO: refactor a pich form
   clearBasket() {
     this.basket = [];
     this.UpdateBasket();
   }
-  
+
   UpdateBasket() {
     this.events.emit('catalog:change', {
       products: this.basket
     });
+    this.events.emit('basket:change', {
+      products: this.basket
+    });
   }
-  
+
+  getTotal(): number {
+    return this.order.items.reduce((acc, item) => acc + this.catalog.find((i) => i.id === item).price, 0);
+  }
+
   clearOrder() {
     this.order = {
       total: 0,
@@ -55,7 +63,7 @@ export class AppState extends Model<IAppState> {
       phone: '',
       email: '',
       payment: 'Онлайн',
-      adress: '',
+      address: '',
     };
   }
 
@@ -109,6 +117,16 @@ setContactField(field: keyof  IContact , value: string) {
   setPreview(item: IProductItem) {
     this.preview = item.id;
     this.emitChanges('preview:changed', item);
+  }
+
+  orderReset(): void {
+    this.order.address = '';
+    this.order.payment = 'Онлайн';
+  }
+
+  contactReset(): void {
+    this.order.email = '';
+    this.order.phone = '';
   }
 }
 
