@@ -6,20 +6,21 @@ export interface IProductItem {
     category: string;
     price: number | null;
   }
-  
-  export interface ApiListResponse {
-    total: number;
-    products: IProductItem[];
+
+  export  interface IProductData {
+    items: IProductItem[];
+    preview: string;
   }
-  
-  export interface IBasket {
-    items: Map<string, number>;
-    add: (id: string) => void;
-    remove: (id: string) => void;
+
+
+  export interface IBasketView {
+    items: HTMLElement[];
+    price: number;
+    selected: string[];
   }
 
   export interface IOrder {
-    adress: string;
+    address: string;
     payment: string;
   }
 
@@ -28,50 +29,26 @@ export interface IProductItem {
     email: string;
   }
 
-  export interface IModal {
-    open: () => void;
-    close: () => void;
-    submit: () => void;
+  export interface IForm extends IOrder, IContact {
+    total: number;
+    items: string[];
   }
 
-  export interface IEventEmitter {
-    on: (event: string, callback: () => void) => void;
-    emit: (event: string) => void;
-    trigger: (event: string) => () => void;
-  }
-
-  export interface IFormState {
-    valid: boolean;
-  }
-
-  export type FormErrors = Partial<Record<keyof IOrder, string>>;
-
-  export interface IModalBasket {
-    modal: IModal;
-    basket: IBasket;
-  }
-
-  export interface IModalOrder extends IFormState {
-    modal: IModal;
-    order: IOrder;
-  }
-  
-  export interface IModalContact extends IFormState {
-    modal: IModal;
-    contact: IContact;
-  }
-
-  export interface ISuccess {
-    close: () => void;
-  }
-
-  export interface ISuccessResult {
+  export interface IFormResponse {
     id: string;
     total: number;
   }
-  
-  export interface IModalSuccess extends IFormState {
-    modal: IModal;
-    success: ISuccess;  
+
+  export type FormErrors = Partial<Record<keyof IForm, string>>;
+
+  export interface ISuccess {
+    total: number;
   }
 
+  export interface IAppState {
+    products: IProductItem[];
+    basket: IProductItem[];
+    order: IForm;
+    orderResponse: IFormResponse | null;
+    prewiew: string | null;
+  }
