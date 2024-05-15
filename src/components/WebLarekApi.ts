@@ -3,7 +3,6 @@ import { Api, ApiListResponse } from './base/api';
 
 export interface IAppAPI {
 	getProductList: () => Promise<IProductItem[]>;
-	// getProductItem: (id: string) => Promise<IProductItem>;
 	order: (order: IForm) => Promise<IFormResponse>;
 }
 
@@ -24,13 +23,6 @@ export class AppApi extends Api implements IAppAPI {
 			}))
 		);
 	}
-
-	// getProductItem(id: string): Promise<IProductItem> {
-	// 	return this.get(`/product/${id}`).then((item: IProductItem) => ({
-	// 		...item,
-	// 		image: this.cdn + item.image,
-	// 	}));
-	// }
 
 	order(order: IForm): Promise<IFormResponse> {
 		return this.post('/order', order).then((data: IFormResponse) => data);

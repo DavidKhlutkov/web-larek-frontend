@@ -151,17 +151,17 @@ disableButton(value: number | null) - проверяет на бесценный
 set price(value: number) / get price(): number - управляет ценой
 set button(value: string) - установка текста кнопки
 ```
-#### Класс Order
+#### Класс Order и Contact
  
- Класс наследуется от класса IForm и предоставляет методы для установки значений телефона и \
+ Класс наследуется от класса IForm (который в свою очередь нужен для обработки ошибок) и предоставляет методы для установки значений телефона и \
  электронной почты , а так жеадреса и выбора оплаты в контейнер.
 
-##### Свойства Order
+##### Свойства Order и Contact
 ```
 protected _cash: HTMLButtonElement - кнопка оплаты наличными
 protected _card: HTMLButtonElement - кнопка оплаты картой
 ```
-##### Методы Order
+##### Методы Order и Contact
 ```
 set phone - устанавливает номер
 set email - устанавливает почту
@@ -180,7 +180,20 @@ protected _catalog: HTMLElement - каталог товаров
 protected _wrapper: HTMLElement - сама страница
 protected _basket: HTMLElement - корзина
 ```
+#### Класс Succes
 
+Класс Success представляет компонент с элементом итогового значения и кнопкой закрытия формы,
+который запускает действие onClick.
+
+##### Свойства Succes
+```
+ constructor(container: HTMLElement, protected actions: ISuccessActions) - установка общего количества товара, \
+ и обработка закрытия
+```
+##### Методы Succes
+```
+ total(value: string) - количество товара
+```
 Данные товара
 
 ```
@@ -228,4 +241,4 @@ IBasket - корзина
 basket: IProductItem[] - данные о товарах
 ```
 
-![UML sheme](https://github.com/DavidKhlutkov/web-larek-frontend/blob/main/SHEMEUMLARCHICTURE.png)
+<!-- ![UML sheme](https://github.com/DavidKhlutkov/web-larek-frontend/blob/main/SHEMEUMLARCHICTURE.png) -->

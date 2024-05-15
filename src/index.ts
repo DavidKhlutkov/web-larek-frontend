@@ -11,6 +11,8 @@ import {
     IProductItem,
     IFormResponse,
     IAppState,
+    IOrder,
+    IContact,
 } from './types';
 import { Api , ApiListResponse } from './components/base/api'
 import { API_URL, CDN_URL } from './utils/constants';
@@ -51,6 +53,11 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const order = new Order(cloneTemplate(orderTemplate), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const contacts = new Contact(cloneTemplate(contactsTemplate), events);
+const success = new Success(cloneTemplate(successTemplate), {
+  onClick() {
+    modal.close();
+  },
+});
 
 //TODO: Переиспользуемые части интерфейса
 
@@ -123,8 +130,7 @@ events.on('basket:change', () => {
 
 // Открытие корзины
 events.on('basket:open', () => {
-  page.locked = true;
-  basket.selected = appData.basket.map(item => item.id);
+
   modal.render({
     content: basket.render({}),
   });
@@ -149,28 +155,49 @@ events.on('basket:change', () => {
 })
 
 // Открытие модального окна с адресом
-events.on('order:submit', () => {
+events.on('order:open', () => {
 	modal.render({
 		content: order.render({
 			payment: '',
 			address: '',
 			valid: false,
 			errors: [],
+      total: appData.getTotal(),
 		}),
 	});
 });
 
 // Открытие модального окна с контактами
-events.on('contacts:submit', () => {
+events.on('order:submit', () => {
   modal.render({
     content: contacts.render({
       phone: '',
       email: '',
       valid: false,
       errors: [],
+      total: appData.getTotal(),
     }),
   })  
 })
+
+// Изменилось состояние валидации формы
+events.on('formErrors:change', (errors: Partial<IForm>) => {
+  const { email, phone , address, payment } = errors;
+  order.valid = !payment && !address;
+  contacts.valid = !email && !phone;
+  const _errors = Object.values({}).filter(i => !!i).join('; ');
+  order.errors = _errors;
+  contacts.errors = _errors;
+});
+
+// Изменилось одно из полей
+events.on(/^order\..*:change/, (data: { field: keyof IOrder, value: string }) => {
+  appData.setOrderField(data.field, data.value);
+});
+
+events.on(/^order\..*:change/, (data: { field: keyof IContact, value: string }) => {
+  appData.setContactField(data.field, data.value);
+});
 
 // Очистка формы
 events.on('order:reset, contacts:reset', () => {
@@ -189,7 +216,20 @@ events.on('modal:close', () => {
 });
 
 // Отправка полей формы
-
+events.on('contacts:submit',() => {
+  api
+      .order(appData.order)
+      .then((res) => {
+    appData.clearBasket();
+    appData.orderReset();
+    appData.contactReset();
+    modal.render({
+      content : success.render({
+        total: res.total,
+      })
+    })
+  })
+})
 
 // Получение и отправка данных
 api.getProductList()
