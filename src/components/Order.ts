@@ -1,9 +1,9 @@
 import { Form } from './common/Form';
-import { IForm } from '../types';
-import { IEvents } from './base/events';
+import { IOrder } from '../types';
+import { IEvents } from './base/Events';
 import { ensureElement } from '../utils/utils';
 
-export class Order extends Form<IForm> {
+export class Order extends Form<IOrder> {
 	protected _cash: HTMLButtonElement;
 	protected _card: HTMLButtonElement;
 
@@ -40,7 +40,7 @@ export class Order extends Form<IForm> {
 	}
 }
 
-export class Contact extends Form<IForm> {
+export class Contact extends Form<IOrder> {
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
 	}

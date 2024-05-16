@@ -1,5 +1,5 @@
 import { IBasketView } from '../types';
-import { EventEmitter } from './base/events';
+import { EventEmitter } from './base/Events';
 import { Component } from './base/Component';
 import { ensureElement, createElement } from '../utils/utils';
 

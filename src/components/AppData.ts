@@ -1,10 +1,10 @@
 import { Model } from './base/Model';
 import {
 	IProductItem,
-	IForm,
+	IOrder,
 	IAppState,
 	FormErrors,
-	IOrder,
+	IDelivery,
 	IContact,
 } from '../types';
 
@@ -15,7 +15,7 @@ export interface CatalogChangeEvent {
 export class AppState extends Model<IAppState> {
 	catalog: IProductItem[];
 	basket: IProductItem[] = [];
-	order: IForm = {
+	order: IOrder = {
 		total: 0,
 		items: [],
 		phone: '',
@@ -28,20 +28,20 @@ export class AppState extends Model<IAppState> {
 
 	addBasket(product: IProductItem) {
 		this.basket.push(product);
-		this.UpdateBasket();
+		this.updateBasket();
 	}
 
 	removeBasket(product: IProductItem) {
 		this.basket = this.basket.filter((item) => item.id !== product.id);
-		this.UpdateBasket();
-	}
-	// TODO: refactor a pich form
-	clearBasket() {
-		this.basket = [];
-		this.UpdateBasket();
+		this.updateBasket();
 	}
 
-	UpdateBasket() {
+	clearBasket() {
+		this.basket = [];
+		this.updateBasket();
+	}
+
+	updateBasket() {
 		this.events.emit('catalog:change', {
 			products: this.basket,
 		});
@@ -62,7 +62,7 @@ export class AppState extends Model<IAppState> {
 		this.emitChanges('items:changed', { catalog: this.catalog });
 	}
 
-	setOrderField(field: keyof IOrder, value: string) {
+	setOrderField(field: keyof IDelivery, value: string) {
 		this.order[field] = value;
 
 		if (this.validateOrder()) {
@@ -73,8 +73,8 @@ export class AppState extends Model<IAppState> {
 	setContactField(field: keyof IContact, value: string) {
 		this.order[field] = value;
 
-		if (this.validateOrder()) {
-			this.events.emit('order:ready', this.order);
+		if (this.validateContact()) {
+			this.events.emit('contacts:ready', this.order);
 		}
 	}
 
