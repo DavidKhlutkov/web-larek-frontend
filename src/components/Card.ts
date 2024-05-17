@@ -49,11 +49,11 @@ export class Card extends Component<ICard> {
 		return this.container.dataset.id || '';
 	}
 
-	set identifier(value: string) {
+	set identifierCard(value: string) {
 		this._identifierCard.textContent = value;
 	}
 
-	get identifier(): string {
+	get identifierCard(): string {
 		return this._identifierCard.textContent || '';
 	}
 
