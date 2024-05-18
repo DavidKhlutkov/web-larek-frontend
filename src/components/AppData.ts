@@ -77,14 +77,14 @@ export class AppState extends Model<IAppState> {
 
 	validateOrder() {
 		const errors: typeof this.orderError = {};
-		if (!this.order.email) {
-			errors.email = 'Необходимо указать email';
+		if (!this.order.payment) {
+			errors.email = 'Необходимо указать cпособ оплаты';
 		}
-		if (!this.order.phone) {
-			errors.phone = 'Необходимо указать телефон';
+		if (!this.order.address) {
+			errors.phone = 'Необходимо указать адрес доставки';
 		}
 		this.orderError = errors;
-		this.events.emit('formErrors:change', this.orderError);
+		this.events.emit('orderformErrors:change', this.orderError);
 		return Object.keys(errors).length === 0;
 	}
 
@@ -97,7 +97,7 @@ export class AppState extends Model<IAppState> {
 			errors.phone = 'Необходимо указать телефон';
 		}
 		this.orderError = errors;
-		this.events.emit('formErrors:change', this.orderError);
+		this.events.emit('contactsformErrors:change', this.orderError);
 		return Object.keys(errors).length === 0;
 	}
 

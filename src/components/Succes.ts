@@ -10,7 +10,7 @@ export class Success extends Component<ISuccess> {
 	protected _total: HTMLElement;
 	protected _closeButton: HTMLButtonElement;
 
-	constructor(container: HTMLElement, protected actions: ISuccessActions) {
+	constructor(container: HTMLElement, protected actions?: ISuccessActions) {
 		super(container);
 
 		this._total = ensureElement<HTMLElement>(

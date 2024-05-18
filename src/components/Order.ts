@@ -38,6 +38,10 @@ export class Order extends Form<IOrder> {
 		this._card.classList.toggle('button_alt-active', isOnline);
 		this._cash.classList.toggle('button_alt-active', isOnDelivery);
 	}
+
+	set valid(value: boolean) {
+		this._submit.disabled = !value;
+	}
 }
 
 export class Contact extends Form<IOrder> {
@@ -53,5 +57,9 @@ export class Contact extends Form<IOrder> {
 	set email(value: string) {
 		(this.container.elements.namedItem('email') as HTMLInputElement).value =
 			value;
+	}
+
+	set valid(value: boolean) {
+		this._submit.disabled = !value;
 	}
 }

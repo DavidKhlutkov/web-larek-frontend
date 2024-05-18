@@ -39,11 +39,7 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const order = new Order(cloneTemplate(orderTemplate), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const contacts = new Contact(cloneTemplate(contactsTemplate), events);
-const success = new Success(cloneTemplate(successTemplate), {
-	onClick() {
-		modal.close();
-	},
-});
+
 
 // Каталог
 events.on<CatalogChangeEvent>('items:changed', () => {
@@ -168,17 +164,25 @@ events.on('order:submit', () => {
 });
 
 // Изменилось состояние валидации формы
-events.on('formErrors:change', (errors: Partial<IOrder>) => {
-	const { email, phone, address, payment } = errors;
+events.on('orderformErrors:change', (errors: Partial<IOrder>) => {
+	const { address, payment } = errors;
 	order.valid = !payment && !address;
-	contacts.valid = !email && !phone;
 	order.errors = Object.values({ payment, address })
 		.filter((i) => !!i)
 		.join('; ');
+	console.log(order.errors);
+	console.log(order.valid);
+});
+
+events.on('contactsformErrors:change', (errors: Partial<IContact>) => {
+	const { email, phone } = errors;
+	contacts.valid = !email && !phone;
 	contacts.errors = Object.values({ email, phone })
 		.filter((i) => !!i)
 		.join('; ');
-});
+	console.log(contacts.errors);
+	console.log(contacts.valid);
+})
 
 // Изменилось одно из полей
 events.on(
@@ -226,8 +230,14 @@ events.on('contacts:submit', () => {
 		.order(appData.order)
 		.then((res) => {
 			appData.clearBasket();
-			appData.orderReset();
-			appData.contactReset();
+			const success = new Success(cloneTemplate(successTemplate), {
+				onClick() {
+					appData.clearBasket();
+					modal.close();
+					appData.orderReset();
+					appData.contactReset();
+				},
+			});
 			modal.render({
 				content: success.render({
 					total: res.total,
