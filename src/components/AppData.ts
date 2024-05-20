@@ -23,12 +23,13 @@ export class AppState extends Model<IAppState> {
 		payment: '',
 		address: '',
 	};
-	get total() {
-		return this.getTotal();
-	}
-	get items() {
-		return this.basket.map((item) => item.id);
-	}
+
+	// get total() {
+	// 	return this.getTotal();
+	// }
+	// get items() {
+	// 	return this.basket.map((item) => item.id);
+	// }
 	orderError: FormErrors = {};
 	preview: string | null;
 
@@ -81,10 +82,10 @@ export class AppState extends Model<IAppState> {
 	validateOrder() {
 		const errors: typeof this.orderError = {};
 		if (!this.order.payment) {
-			errors.email = 'Необходимо указать cпособ оплаты';
+			errors.payment = 'Необходимо указать cпособ оплаты';
 		}
 		if (!this.order.address) {
-			errors.phone = 'Необходимо указать адрес доставки';
+			errors.address = 'Необходимо указать адрес доставки';
 		}
 		this.orderError = errors;
 		this.events.emit('orderformErrors:change', this.orderError);
