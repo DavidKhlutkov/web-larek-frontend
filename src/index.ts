@@ -40,7 +40,6 @@ const order = new Order(cloneTemplate(orderTemplate), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const contacts = new Contact(cloneTemplate(contactsTemplate), events);
 
-
 // Каталог
 events.on<CatalogChangeEvent>('items:changed', () => {
 	page.catalog = appData.catalog.map((item) => {
@@ -119,6 +118,7 @@ events.on('basket:open', () => {
 			price: appData.getTotal(),
 		}),
 	});
+	appData.order.total = basket.priceTotal;
 });
 
 // Обновление корзины
@@ -145,7 +145,6 @@ events.on('order:open', () => {
 			address: '',
 			valid: false,
 			errors: [],
-			total: appData.getTotal(),
 		}),
 	});
 });
@@ -158,7 +157,6 @@ events.on('order:submit', () => {
 			email: '',
 			valid: false,
 			errors: [],
-			total: appData.getTotal(),
 		}),
 	});
 });
@@ -180,9 +178,7 @@ events.on('contactsformErrors:change', (errors: Partial<IContact>) => {
 	contacts.errors = Object.values({ email, phone })
 		.filter((i) => !!i)
 		.join('; ');
-	console.log(contacts.errors);
-	console.log(contacts.valid);
-})
+});
 
 // Изменилось одно из полей
 events.on(
@@ -193,26 +189,19 @@ events.on(
 );
 
 events.on(
-	/^order\..*:change/,
+	/^contacts\..*:change/,
 	(data: { field: keyof IContact; value: string }) => {
 		appData.setContactField(data.field, data.value);
 	}
 );
 
-// Изменилась валидация
-events.on('order:ready', () => {
-	order.valid = true;
-});
-
-events.on('contacts:ready', () => {
-	contacts.valid = true;
-});
-
-// Очистка формы
-events.on('order:reset, contacts:reset', () => {
-	appData.orderReset();
-	appData.contactReset();
-});
+// Изменилось поле ввода оплаты
+events.on(
+	`order.payment:change`,
+	(data: { field: keyof IDelivery; value: string }) => {
+		appData.setOrderField(data.field, data.value);
+	}
+);
 
 // При открытии модального окна блокируем страницу
 events.on('modal:open', () => {
@@ -229,13 +218,12 @@ events.on('contacts:submit', () => {
 	api
 		.order(appData.order)
 		.then((res) => {
-			appData.clearBasket();
 			const success = new Success(cloneTemplate(successTemplate), {
 				onClick() {
-					appData.clearBasket();
 					modal.close();
 					appData.orderReset();
 					appData.contactReset();
+					appData.clearBasket();
 				},
 			});
 			modal.render({

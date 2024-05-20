@@ -1,29 +1,22 @@
 import { Form } from './common/Form';
 import { IOrder } from '../types';
 import { IEvents } from './base/Events';
-import { ensureElement } from '../utils/utils';
+import { ensureAllElements } from '../utils/utils';
 
 export class Order extends Form<IOrder> {
-	protected _cash: HTMLButtonElement;
-	protected _card: HTMLButtonElement;
+	protected _payment: HTMLButtonElement[];
 
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
 
-		this._cash = ensureElement<HTMLButtonElement>(
-			'button[name="cash"]',
-			this.container
-		);
-		this._card = ensureElement<HTMLButtonElement>(
-			'button[name="card"]',
-			this.container
-		);
+		this._payment = ensureAllElements(`.button_alt`, this.container);
 
-		this._card.addEventListener('click', () => (this.payment = 'Онлайн'));
-		this._cash.addEventListener(
-			'click',
-			() => (this.payment = 'При получении')
-		);
+		this._payment.forEach((button) => {
+			button.addEventListener('click', () => {
+				this.payment = button.name;
+				this.onInputChange(`payment`, button.name);
+			});
+		});
 	}
 
 	set address(value: string) {
@@ -31,12 +24,17 @@ export class Order extends Form<IOrder> {
 			value;
 	}
 
-	set payment(value: string) {
-		const isOnline = value === 'Онлайн';
-		const isOnDelivery = value === 'При получении';
+	set payment(name: string) {
+		this._payment.forEach((button) => {
+			this.toggleClass(button, 'button_alt-active', button.name === name);
+			console.log(button.name);
+		});
+	}
 
-		this._card.classList.toggle('button_alt-active', isOnline);
-		this._cash.classList.toggle('button_alt-active', isOnDelivery);
+	clearFieldPayment() {
+		this._payment.forEach((button) => {
+			this.toggleClass(button, 'button_alt-active', false);
+		});
 	}
 
 	set valid(value: boolean) {

@@ -8,3 +8,10 @@ export const settings: { [key: string]: string } = {
 	дополнительное: 'card__category_additional',
 	другое: 'card__category_other',
 };
+
+// утилита для оплаты
+
+export const pay: { [key: string]: string } = {
+	card: 'online',
+	cash: 'cash',
+};

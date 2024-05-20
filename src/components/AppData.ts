@@ -23,6 +23,12 @@ export class AppState extends Model<IAppState> {
 		payment: '',
 		address: '',
 	};
+	get total() {
+		return this.getTotal();
+	}
+	get items() {
+		return this.basket.map((item) => item.id);
+	}
 	orderError: FormErrors = {};
 	preview: string | null;
 
@@ -51,7 +57,7 @@ export class AppState extends Model<IAppState> {
 	}
 
 	getTotal(): number {
-		return this.basket.reduce( (acc, item) => acc + item.price, 0);
+		return this.basket.reduce((acc, item) => acc + item.price, 0);
 	}
 
 	setCatalog(products: IProductItem[]) {
@@ -61,9 +67,7 @@ export class AppState extends Model<IAppState> {
 
 	setOrderField(field: keyof IDelivery, value: string) {
 		this.order[field] = value;
-
 		if (this.validateOrder()) {
-			this.events.emit('order:ready', this.order);
 		}
 	}
 
@@ -71,7 +75,6 @@ export class AppState extends Model<IAppState> {
 		this.order[field] = value;
 
 		if (this.validateContact()) {
-			this.events.emit('contacts:ready', this.order);
 		}
 	}
 
@@ -106,12 +109,12 @@ export class AppState extends Model<IAppState> {
 		this.emitChanges('preview:changed', item);
 	}
 
-	orderReset(): void {
+	orderReset() {
 		this.order.address = '';
 		this.order.payment = '';
 	}
 
-	contactReset(): void {
+	contactReset() {
 		this.order.email = '';
 		this.order.phone = '';
 	}
