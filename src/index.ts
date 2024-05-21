@@ -112,13 +112,11 @@ events.on('basket:change', () => {
 // Открытие корзины
 events.on('basket:open', () => {
 	basket.selected = appData.basket.map((item) => item.id);
-	basket.priceTotal = appData.getTotal();
 	modal.render({
 		content: basket.render({
 			price: appData.getTotal(),
 		}),
 	});
-	appData.order.total = basket.priceTotal;
 });
 
 // Обновление корзины
@@ -135,6 +133,8 @@ events.on('basket:change', () => {
 			price: item.price,
 		});
 	});
+
+	basket.priceTotal = appData.getTotal();
 });
 
 // Открытие модального окна с адресом
@@ -168,8 +168,6 @@ events.on('orderformErrors:change', (errors: Partial<IOrder>) => {
 	order.errors = Object.values({ payment, address })
 		.filter((i) => !!i)
 		.join('; ');
-	console.log(order.errors);
-	console.log(order.valid);
 });
 
 events.on('contactsformErrors:change', (errors: Partial<IContact>) => {
@@ -216,7 +214,13 @@ events.on('modal:close', () => {
 // Отправка полей формы
 events.on('contacts:submit', () => {
 	api
-		.order(appData.order)
+		.order(
+			{
+				...appData.order,
+				total: appData.getTotal(),
+				items: appData.basket.map((item) => item.id),
+			}
+		)
 		.then((res) => {
 			const success = new Success(cloneTemplate(successTemplate), {
 				onClick() {

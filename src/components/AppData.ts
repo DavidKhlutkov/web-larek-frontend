@@ -23,13 +23,7 @@ export class AppState extends Model<IAppState> {
 		payment: '',
 		address: '',
 	};
-
-	// get total() {
-	// 	return this.getTotal();
-	// }
-	// get items() {
-	// 	return this.basket.map((item) => item.id);
-	// }
+	
 	orderError: FormErrors = {};
 	preview: string | null;
 

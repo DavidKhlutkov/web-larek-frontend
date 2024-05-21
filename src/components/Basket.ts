@@ -34,6 +34,7 @@ export class Basket extends Component<IBasketView> {
 				})
 			);
 		}
+		this._button.disabled = items.length ? false : true;
 	}
 
 	set selected(items: string[]) {
