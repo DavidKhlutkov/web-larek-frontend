@@ -222,12 +222,12 @@ events.on('contacts:submit', () => {
 			}
 		)
 		.then((res) => {
+			appData.clearBasket();
 			const success = new Success(cloneTemplate(successTemplate), {
 				onClick() {
 					modal.close();
 					appData.orderReset();
 					appData.contactReset();
-					appData.clearBasket();
 				},
 			});
 			modal.render({
